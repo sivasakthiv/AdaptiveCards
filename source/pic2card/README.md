@@ -19,8 +19,8 @@ Pic2Card is a solution for converting adaptive cards GUI design image into adapt
     # Setup dependency under a virtualenv
     $ virtualenv ~/env
     $ . ~/env/bin/activate
-    (env)$ pip install -r requirements.txt
-    (env)$ pip install -r requirements-frozen_graph.txt # tf specific only
+    (env)$ pip install -r requirements/requirements.txt
+    (env)$ pip install -r requirements/requirements-frozen_graph.txt # tf specific only
 
     # Start the service.
     (env)$ python -m app.main
@@ -57,13 +57,32 @@ b. Image which has only the service layer, the model will be consumed from the
 # Build the image with frozen model.
 $ docker build --build-arg TARGET_API=frozen_graph \
             --build-arg tfs_enable=\
+            -f docker/Dockerfile \
             -t <username>/<container-name:tag> .
 
-# Run the container,
+# Run the pic2card service with frozen graph model.
 $ docker run -it --name pic2card -p 5050:5050 <image:name:tag>
 
 ```
-   ​
+
+If you want to use the tensorflow serving to serve the model, then first build
+the tensorflow serving with our model loaded with it on an another separate
+docker. tf_serving provide RESTful APIs to interact with tensorflow models, in
+standard way.
+
+```bash
+# You can export the model for inferencing from model checkpoint.
+#
+$ cp <tf saved_model>/* model/*
+$ docker build . -t <image:tag> docker/Dockerfile-tf_serving
+$ docker run -it -p 8501:8501 <image:tag>
+
+# Build the pic2card pipeline without trained model. Now the inference is
+# provided by the tensorflow serving.
+
+$ docker build -t <image:tag> -f docker/Dockerfile .
+```
+
 ## Training
 After the [Tensorflow ,Tensorflow models intsallation](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/install.html):
 
@@ -171,7 +190,7 @@ To run all tests
 python -m unittest discover
 ```
 
-## Measure the model performance
+## Measure the model Accuracy
 
 We are using the standard mAP (Mean Average Precision) metric. Use the below
 command to generate the intermediate results so that can be used to generate the

@@ -13,10 +13,9 @@ import click
 import pathlib
 import numpy as np
 import pandas as pd
-from PIL import Image
 from mystique.initial_setups import set_graph_and_tensors
-from mystique.detect_objects import ObjectDetection, PtObjectDetection
-from mystique.utils import xml_to_csv, id_to_label
+from mystique.detect_objects import ObjectDetection
+from mystique.utils import xml_to_csv
 
 
 @click.command()
@@ -62,6 +61,7 @@ def generate_map(test_dir, ground_truth_dir, pred_truth_dir,
     if model_fw == "tf":
         object_detection = ObjectDetection(*set_graph_and_tensors())
     elif model_fw == "pytorch":
+        from mystique.detect_objects_pth import PtObjectDetection
         object_detection = PtObjectDetection()
 
     data_df = xml_to_csv(test_dir)

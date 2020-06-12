@@ -19,13 +19,13 @@
 #
 ARG TARGET_API=tfs
 FROM python:3.6.9-slim-buster as tfs
-ADD requirements.txt /app/requirements.txt
+ADD requirements/requirements.txt /app/requirements.txt
 
 
 FROM python:3.6.9-slim-buster as frozen_graph
 # Fill in both, as in this case we need both dependencies.
-ADD requirements-frozen_graph.txt /app/
-ADD requirements.txt /app/
+ADD requirements/requirements-frozen_graph.txt /app/
+ADD requirements/requirements.txt /app/
 RUN cat /app/requirements-frozen_graph.txt >> /app/requirements.txt
 COPY model/frozen_inference_graph.pb /app/model/
 
