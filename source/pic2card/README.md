@@ -19,8 +19,8 @@ Pic2Card is a solution for converting adaptive cards GUI design image into adapt
     # Setup dependency under a virtualenv
     $ virtualenv ~/env
     $ . ~/env/bin/activate
-    (env)$ pip install -r requirements/requirements.txt
-    (env)$ pip install -r requirements/requirements-frozen_graph.txt # tf specific only
+    (env)$ pip install -r requirements.txt
+    (env)$ pip install -r requirements-frozen_graph.txt # tf specific only
 
     # Start the service.
     (env)$ python -m app.main
