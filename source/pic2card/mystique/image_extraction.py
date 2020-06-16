@@ -57,6 +57,29 @@ class ImageExtraction:
             else:
                 return False
 
+    def check_contains(self, point1: Tuple, point2: Tuple, between_models=False):
+        """
+        Check if a point[coordinates of an object] is inside another point or not
+
+        @param point1: Tuple of coordinates
+        @param point2: Tuple of coordinates
+        @param between_models: A Boolean for check within image objects or between
+                               the RCNN and image model.[ default - Flase i.e
+                               by default it's done within image objects]
+        @return: True/False
+        """
+        x_range = min(point2[0], point2[2]), max(point2[0], point2[2])
+        y_range = min(point2[1], point2[3]), max(point2[1], point2[3])
+        contains = ((x_range[0] <= point1[0] <= x_range[1]
+                     and x_range[0] <= point2[2] <= x_range[1]) and
+                    (y_range[0] <= point1[1] <= y_range[1]
+                     and y_range[0] <= point2[3] <= y_range[1]))
+        if between_models:
+            return contains or ((point2[0] <= point1[0] + 5 <= point2[2])
+                                and (point2[1] <= point1[1] + 5 <= point2[3]))
+        else:
+            return contains
+
     def remove_noise_objects(self, points: List[Tuple]):
         """
         Removes all noisy objects by eliminating all smaller and intersecting
@@ -74,31 +97,18 @@ class ImageExtraction:
                     box1 = [float(c) for c in points[i]]
                     box2 = [float(c) for c in points[j]]
                     intersection = self.find_points(box1, box2, for_image=True)
-
-                    x_range = min(box1[0], box1[2]), max(box1[0], box1[2])
-                    y_rane = min(box1[1], box1[3]), max(box1[1], box1[3])
-                    contain = (
-                        (x_range[0] <= box2[0] <= x_range[1]
-                         and x_range[0] <= box2[2] <= x_range[1]
-                         ) and
-                        (y_rane[0] <= box2[1] <= y_rane[1]
-                         and y_rane[0] <= box2[3] <= y_rane[1]
-                         )
-                    )
+                    contain = self.check_contains(box1, box2)
                     if intersection or contain:
                         if (i, j) not in intersection_combination:
-                            if (
-                                (box1[2] - box1[0]) * (box1[3] - box1[1])
-                                > (box2[2] - box2[0]) * (box2[3] - box2[1])
-                            ) and j not in positions_to_delete:
+                            # remove the smallest box
+                            box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
+                            box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
+                            if box1_area > box2_area and j not in positions_to_delete:
                                 positions_to_delete.append(j)
                                 intersection_combination.append((i, j))
-                            elif (
-                                (box1[2] - box1[0]) * (box1[3] - box1[1])
-                                < (box2[2] - box2[0]) * (box2[3] - box2[1])
-                            ) and i not in positions_to_delete:
-                                positions_to_delete.append(i)
-                                intersection_combination.append((i, j))
+                            elif box1_area < box1_area and i not in positions_to_delete :
+                                    positions_to_delete.append(i)
+                                    intersection_combination.append((i, j))
         points = [p for ctr, p in enumerate(
             points) if ctr not in positions_to_delete]
         return points
@@ -148,27 +158,15 @@ class ImageExtraction:
                             among points1 and points2
         """
         
-        
         for point1_ctr, point1 in enumerate(points1):
             for point2_ctr, point2 in enumerate(points2):
-                x_range = min(point2[0], point2[2]), max(point2[0], point2[2])
-                y_rane = min(point2[1], point2[3]), max(point2[1], point2[3])
                 if not image_first:
-                    intersection = self.find_points(point1, point2, for_image=True)
+                    intersection = self.find_points(
+                        point1, point2, for_image=True)
                 else:
                     intersection = False
-                contains = (
-                    (x_range[0] <= point1[0] <= x_range[1]
-                     and x_range[0] <= point1[2] <= x_range[1]
-                     )
-                    and
-                    (y_rane[0] <= point1[1] <= y_rane[1]
-                     and y_rane[0] <= point1[3] <= y_rane[1]
-                     )
-                ) or (
-                    (point2[0] <= point1[0] + 5 <= point2[2])
-                    and (point2[1] <= point1[1] + 5 <= point2[3])
-                )
+                contains = self.check_contains(
+                    point1, point2, between_models=True)
                 if contains or intersection:
                     if image_first:
                         included_points_positions[point1_ctr] = 1
@@ -200,7 +198,7 @@ class ImageExtraction:
 
         # remove the included points in intersection removal
         image_points1 = []
-        for ctr,point in enumerate(image_points):
+        for ctr, point in enumerate(image_points):
             if included_points_positions[ctr] != 1:
                 image_points1.append(point)
         image_points = sorted(set(image_points1), key=image_points1.index)
@@ -248,7 +246,7 @@ class ImageExtraction:
 
         # remove the included points in intersection removal
         image_points1 = []
-        for ctr,point in enumerate(image_points):
+        for ctr, point in enumerate(image_points):
             if included_points_positions[ctr] != 1:
                 image_points1.append(point)
         image_points = sorted(set(image_points1), key=image_points1.index)

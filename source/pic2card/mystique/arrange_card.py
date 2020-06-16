@@ -4,6 +4,7 @@ import collections
 
 from .image_extraction import ImageExtraction
 from .extract_properties import ExtractProperties
+from mystique import config
 
 
 class CardArrange:
@@ -97,9 +98,10 @@ class CardArrange:
             # greater than 1000px width and height
             width, height = image_sizes[ctr]
             image_width, image_height = pil_image.size
-            if image_width >= 1000 and image_height >= 1000:
-                width = width*0.3
-                height = height*0.3
+            if (image_width >= config.IMG_OBJECT_MAX_SIZE
+                    and image_height >= config.IMG_OBJECT_MAX_SIZE):
+                width = width*config.IMG_OBJECT_RESIZE_FACTOR
+                height = height*config.IMG_OBJECT_RESIZE_FACTOR
             object_json["size"] = (round(width), round(height))
             object_json["coords"] = ",".join([str(coords[0]),
                                               str(coords[1]), str(coords[2]),
