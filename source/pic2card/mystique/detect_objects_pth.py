@@ -25,8 +25,7 @@ class PtObjectDetection:
                "textbox",
                "actionset",
                "image",
-               "rating",
-               "textboox"]
+               "rating"]
     model = None
 
     def __init__(self, model_path=None):
