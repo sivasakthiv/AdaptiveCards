@@ -1,7 +1,10 @@
 """Module for arranging the design elements for the Card json"""
 
+import collections
+
 from .image_extraction import ImageExtraction
 from .extract_properties import ExtractProperties
+from mystique import config
 
 
 class CardArrange:
@@ -20,7 +23,6 @@ class CardArrange:
         Removes the overlapping faster rcnn detected objects by
         finding the intersection between 2 objects.
         And removes the overlapping text objects on actionsets.
-
         @param json_object: list of design objects
         """
         image_extraction = ImageExtraction()
@@ -69,7 +71,6 @@ class CardArrange:
         """
         Appends the extracted image objects to the list of design objects
         along with its proprties extarcted.
-
         @param image_urls: list of image object urls
         @param image_coords: list of image object cooridnates
         @param pil_image: input PIL image
@@ -86,13 +87,20 @@ class CardArrange:
             object_json["horizontal_alignment"] = extract_properties.get_alignment(
                 image=pil_image, xmin=float(coords[0]), xmax=float(coords[2]))
             object_json["data"] = im
-            object_json["sizes"] = extract_properties.get_image_size(
-                image=pil_image,
-                image_cropped_size=image_sizes[ctr])
             object_json["xmin"] = coords[0]
             object_json["ymin"] = coords[1]
             object_json["xmax"] = coords[2]
             object_json["ymax"] = coords[3]
+            object_json["image_size"] = pil_image.size
+            # resize the image object size if the deisgn image is
+            # greater than 1000px width and height
+            width, height = image_sizes[ctr]
+            image_width, image_height = pil_image.size
+            if (image_width >= config.IMG_OBJECT_MAX_SIZE
+                    and image_height >= config.IMG_OBJECT_MAX_SIZE):
+                width = width*config.IMG_OBJECT_RESIZE_FACTOR
+                height = height*config.IMG_OBJECT_RESIZE_FACTOR
+            object_json["size"] = (round(width), round(height))
             object_json["coords"] = ",".join([str(coords[0]),
                                               str(coords[1]), str(coords[2]),
                                               str(coords[3])])
@@ -102,7 +110,6 @@ class CardArrange:
         """
         Groups the image objects into imagesets which are in 
         closer ymin range.
-
         @param image_objects: list of image objects
         @param body: list card deisgn elements.
         @param ymins: list of ymins of card design
@@ -128,7 +135,7 @@ class CardArrange:
             if len(group) > 1:
                 image_set = {
                     "type": "ImageSet",
-                    "imageSize": "medium",
+                    "imageSize": "Auto",
                     "images": []
                 }
                 for design_object in group:
@@ -140,6 +147,8 @@ class CardArrange:
                         "horizontalAlignment": design_object.
                         get("horizontal_alignment", ""),
                         "url": design_object.get("data"),
+                        "width": str(design_object.get("size", (10, 10))[0])+"px",
+                        "height": str(design_object.get("size", (10, 10))[1])+"px",
                     }
                     image_set["images"].append(obj)
                 body.append(image_set)
@@ -149,10 +158,8 @@ class CardArrange:
         """
         Returns the position of an dictionary inside 
         a list of dictionaries
-
         @param groups: list of dictionaries
         @param obj: dictionary
-
         @return: position if found else -1
         """
         for i in range(len(groups)):
@@ -164,7 +171,6 @@ class CardArrange:
         """
         Groups the choice elements into choicesets based on
         the closer ymin range
-
         @param radiobuttons: list of individual choice
                              elements
         @param body: list of card deisgn elements
@@ -230,7 +236,6 @@ class CardArrange:
                        is_column=None):
         """
         Appends the individaul design elements to card body
-
         @param design_objects: design element to append
         @param body: list of design elements
         @param ymins: list of ymin of design elements
@@ -240,7 +245,7 @@ class CardArrange:
         if design_object.get("object") == "actionset":
             body.append({
                 "type": "ActionSet",
-                # "separator": "true",
+                # "separator": "true", # Issue in data binding if separator is set to True
                 "actions": [{
                     "type": "Action.Submit",
                     "title": design_object.get("data"),
@@ -251,16 +256,13 @@ class CardArrange:
             if ymins is not None:
                 ymins.append(design_object.get("ymin"))
         if design_object.get("object") == "image":
-            if is_column:
-                size = design_object.get("sizes")[0]
-            else:
-                size = design_object.get("sizes")[1]
             body.append({
                 "type": "Image",
                 "altText": "Image",
                 "horizontalAlignment": design_object.
                 get("horizontal_alignment", ""),
-                "size": size,
+                "width": str(design_object.get("size", (10, 10))[0])+"px",
+                "height": str(design_object.get("size", (10, 10))[1])+"px",
                 "url": design_object.get("data"),
             })
             if ymins is not None:
@@ -308,9 +310,7 @@ class CardArrange:
     def build_card_json(self, objects=None):
         """
         Builds the Adaptive card json
-
         @param objects: list of all design objects
-
         @return: card body and ymins of deisgn elements
         """
         body = []

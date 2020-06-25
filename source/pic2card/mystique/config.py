@@ -36,3 +36,12 @@ ID_TO_LABEL = {
     5: "image",
     6: "rating"
 }
+# image object's max size and resizing factor - 1000px
+IMG_OBJECT_MAX_SIZE = 1000
+# Image resizing factor for custom image pipeline is decided by the nth power of
+# 10 of the IMG_OBJECT_MAX_SIZE
+IMG_OBJECT_RESIZE_FACTOR = 0.1 * str(IMG_OBJECT_MAX_SIZE).count('0')
+# image detection swtiching paramater
+# On True [ uses custom image pipeline for image objects]
+# On False [ uses RCNN model image obejcts ]
+USE_CUSTOM_IMAGE_PIPELINE = True
