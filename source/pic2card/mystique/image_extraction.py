@@ -174,7 +174,7 @@ class ImageExtraction:
                         included_points_positions[point2_ctr] = 1
 
     def get_image_with_boundary_boxes(self, image=None, detected_coords=None,
-                                      pil_image=None, faster_rcnn_image=None):
+                                      pil_image=None):
         """
         Returns the Detected image object boundary boxes along with
         faster rcnn detected boxes.
@@ -185,8 +185,6 @@ class ImageExtraction:
         @param pil_image: Input PIL image
         @param faster_rcnn_image: image with faster rcnn detected object's
         boundary boxes
-
-        @return: detected obejct's boundary detection base64 string
         """
         image_points = self.image_edge_detection(image)
 
@@ -212,15 +210,9 @@ class ImageExtraction:
                 del image_points[ctr]
         image_points = self.remove_noise_objects(image_points)
 
-        # return the input image with image objects boundaries
-        image_model_base64_string = ''
         for point in image_points:
-            cv2.rectangle(faster_rcnn_image,
+            cv2.rectangle(image,
                           (point[0], point[1]), (point[2], point[3]), (0, 0, 255), 2)
-            retval, image_buffer = cv2.imencode(".png", faster_rcnn_image)
-            image_model_base64_string = base64.b64encode(image_buffer).decode()
-
-        return image_model_base64_string
 
     def detect_image(self, image=None, detected_coords=None, pil_image=None):
         """
