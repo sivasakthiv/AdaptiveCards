@@ -1,8 +1,20 @@
 <template>
     <div class=" d-flex w-100 ">
         <loading :isLoading="isLoading" :color="'primary'" />
-        <div class="flex-wrap  d-flex w-100">
+
+        <div class="flex-wrap  d-flex w-100 justify-content-center">
+            <div v-if="isError" class="justify-content-center mt-2 p-2">
+                <b-alert
+                    show
+                    variant="warning"
+                    dismissible
+                    @dismissed=";(isError = false), getTemplateImages()"
+                >
+                    {{ error }} please try again.!
+                </b-alert>
+            </div>
             <div
+                v-else
                 v-for="(item, index) in base64_images"
                 :key="index"
                 class="col-lg-3 col-md-4 col-6 "
@@ -21,21 +33,6 @@
                         class="p2c-thumbnail"
                     ></b-img-lazy>
                 </div>
-                <!-- <div class=" left-container">
-                    <b-img-lazy
-                        v-bind="{
-                            blank: true,
-                            blankColor: '#bbb',
-                            width: 400,
-                            height: 300
-                        }"
-                        :src="item | image_data_url"
-                        rounded
-                    ></b-img-lazy>
-                </div> -->
-                <!-- <div class="right-container">
-                    <cardview :url="item" />
-                </div> -->
             </div>
         </div>
     </div>
@@ -53,7 +50,9 @@ export default {
     data() {
         return {
             isLoading: true,
-            base64_images: null
+            base64_images: null,
+            isError: false,
+            error: ''
         }
     },
     methods: {
@@ -64,6 +63,22 @@ export default {
                     url: value
                 }
             })
+        },
+        getTemplateImages: function() {
+            this.isLoading = true
+            imageapi
+                .getTemplateImages()
+                .then(response => {
+                    let cards = response.data['templates']
+                    this.base64_images = cards
+                    this.isLoading = false
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.isLoading = false
+                    this.error = 'Something Went Wrong'
+                    this.isError = true
+                })
         }
     },
 
@@ -73,18 +88,7 @@ export default {
         }
     },
     created() {
-        this.isLoading = true
-        imageapi
-            .getTemplateImages()
-            .then(response => {
-                let cards = response.data['templates']
-                this.base64_images = cards
-                this.isLoading = false
-            })
-            .catch(err => {
-                console.log(err)
-                this.isLoading = falses
-            })
+        this.getTemplateImages()
     }
 }
 </script>

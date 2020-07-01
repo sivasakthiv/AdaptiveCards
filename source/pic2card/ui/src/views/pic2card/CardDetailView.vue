@@ -1,7 +1,17 @@
 <template>
     <div class="d-flex   flex-column position-relative ">
         <loading :isLoading="isLoading" v-bind:color="'primary'" />
-        <div v-show="!isLoading" class="d-flex bg-white h-100">
+        <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
+            <b-alert
+                show
+                variant="warning"
+                dismissible
+                @dismissed=";(isError = false), pic2Card(url)"
+            >
+                {{ error }} please try again.!
+            </b-alert>
+        </div>
+        <div v-else v-show="!isLoading" class="d-flex bg-white h-100">
             <div class=" left-container mr-1 bg-light">
                 <div v-if="!isLoading" class="title text-center">
                     Picture Boundary
@@ -60,7 +70,9 @@ export default {
             imageString: this.url,
             cardHtml: null,
             imageBoundary: null,
-            cardJson: null
+            cardJson: null,
+            isError: false,
+            error: ''
         }
     },
     computed: {
@@ -107,6 +119,8 @@ export default {
                 .catch(err => {
                     console.log(err)
                     this.isLoading = false
+                    this.error = 'Something Went Wrong'
+                    this.isError = true
                 })
         }
     },

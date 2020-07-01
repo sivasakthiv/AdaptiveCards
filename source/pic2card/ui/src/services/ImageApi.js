@@ -9,15 +9,18 @@ const apiClient = axios.create({
         Accept: 'application/json',
         'Content-Type': 'application/json'
     },
-    timeout: 10000
+    timeout: 200000
 })
 
 export default {
     baseURL() {
         return apiClient.baseURL
     },
+    // getTemplateImages() {
+    //     return axios.get('json/sample_get_card_templates.json')
+    // },
     getTemplateImages() {
-        return axios.get('json/sample_get_card_templates.json')
+        return apiClient.get('/get_card_templates')
     },
     getAdaptiveCard(base64_image) {
         let data = {

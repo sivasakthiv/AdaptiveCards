@@ -31,7 +31,7 @@ export default {
     name: 'Header',
     data: () => {
         return {
-            title: 'PIC2CARD'
+            title: 'Pic2Card'
         }
     }
 }

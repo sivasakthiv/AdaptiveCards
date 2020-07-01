@@ -39,5 +39,6 @@ html {
     width: 100%;
     display: flex;
     overflow: auto;
+    position: relative;
 }
 </style>
