@@ -17,12 +17,8 @@ export default {
         return apiClient.baseURL
     },
     getTemplateImages() {
-        return apiClient.get('/get_card_templates')
+        return axios.get('json/sample_get_card_templates.json')
     },
-
-    /**
-     * @param {any} base64_image
-     */
     getAdaptiveCard(base64_image) {
         let data = {
             image: base64_image
@@ -32,7 +28,6 @@ export default {
                 'Content-Type': 'application/json'
             }
         }
-
         // Creating fresh client instance to handle the request, as
         // latency of this endpoint is higher.
         return axios({

@@ -1,16 +1,27 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import LandingPage from '../views/landing-page/LandingPage.vue'
+import Pic2Card from '../views/pic2card/Pic2Card.vue'
+import CardDetailView from '../views/pic2card/CardDetailView.vue'
+import store from '../store'
+
 Vue.use(VueRouter)
 
 const routes = [
     {
+        path: '/cardview',
+        name: 'cardDetailView',
+        component: CardDetailView,
+        props: true
+    },
+    {
         path: '/',
-        name: 'home',
-        component: () => import('../views/Home.vue')
+        name: 'Pic2Card',
+        component: Pic2Card
     }
 ]
 
-const router = new VueRouter({
+export const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
