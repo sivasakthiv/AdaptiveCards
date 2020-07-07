@@ -37,7 +37,6 @@ html {
 .content-height {
     height: calc(100vh - 8rem);
     width: 100%;
-    display: flex;
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;

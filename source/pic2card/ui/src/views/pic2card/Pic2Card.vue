@@ -1,6 +1,6 @@
 <template>
-    <div class="flex-wrap  d-flex">
-        <div class=" d-flex w-100 justify-content-end p-1 sticky-top">
+    <div>
+        <div class=" d-flex justify-content-end p-1 sticky-top">
             <b-button size="sm" variant="primary" @click="openRenderAll()"
                 >Render All</b-button
             >
