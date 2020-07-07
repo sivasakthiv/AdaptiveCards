@@ -1,37 +1,43 @@
 <template>
-    <div class=" d-flex w-100 ">
-        <loading :isLoading="isLoading" :color="'primary'" />
-
-        <div class="flex-wrap  d-flex w-100 justify-content-center">
-            <div v-if="isError" class="justify-content-center mt-2 p-2">
-                <b-alert
-                    show
-                    variant="warning"
-                    dismissible
-                    @dismissed=";(isError = false), getTemplateImages()"
-                >
-                    {{ error }} please try again.!
-                </b-alert>
-            </div>
-            <div
-                v-else
-                v-for="(item, index) in templates"
-                :key="index"
-                class="col-lg-3 col-md-4 col-6 "
-                @click="openDetailView(item)"
+    <div class="flex-wrap  d-flex">
+        <div class=" d-flex w-100 justify-content-end p-1 sticky-top">
+            <b-button size="sm" variant="primary" @click="openRenderAll()"
+                >Render All</b-button
             >
-                <div class="d-block mb-4 h-100">
-                    <b-img-lazy
-                        v-bind="{
-                            blank: true,
-                            blankColor: '#bbb',
-                            width: 250,
-                            height: 250
-                        }"
-                        :src="item | image_data_url"
-                        rounded
-                        class="p2c-thumbnail"
-                    ></b-img-lazy>
+        </div>
+        <div class=" d-flex w-100 ">
+            <loading :isLoading="isLoading" :color="'primary'" />
+            <div class="flex-wrap  d-flex w-100 justify-content-center">
+                <div v-if="isError" class="justify-content-center mt-2 p-2">
+                    <b-alert
+                        show
+                        variant="warning"
+                        dismissible
+                        @dismissed=";(isError = false), getTemplateImages()"
+                    >
+                        {{ error }} please try again.!
+                    </b-alert>
+                </div>
+                <div
+                    v-else
+                    v-for="(item, index) in templates"
+                    :key="index"
+                    class="col-lg-3 col-md-4 col-6 "
+                    @click="openDetailView(item)"
+                >
+                    <div class="d-block mb-4 h-100">
+                        <b-img-lazy
+                            v-bind="{
+                                blank: true,
+                                blankColor: '#bbb',
+                                width: 250,
+                                height: 250
+                            }"
+                            :src="item | image_data_url"
+                            rounded
+                            class="p2c-thumbnail"
+                        ></b-img-lazy>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,6 +72,11 @@ export default {
                 params: {
                     url: value
                 }
+            })
+        },
+        openRenderAll: function(value) {
+            this.$router.push({
+                name: 'renderAllImage'
             })
         },
         getTemplateImages: function() {

@@ -17,8 +17,8 @@ export default {
         return apiClient.baseURL
     },
     getTemplateImages() {
-        return axios.get('json/sample_get_card_templates.json')
-        // return apiClient.get('/get_card_templates')
+        // return axios.get('json/sample_get_card_templates.json')
+        return apiClient.get('/get_card_templates')
     },
     getAdaptiveCard(base64_image) {
         let data = {

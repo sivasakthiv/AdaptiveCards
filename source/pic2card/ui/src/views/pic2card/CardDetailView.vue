@@ -1,5 +1,17 @@
 <template>
     <div class="d-flex   flex-column position-relative ">
+        <b-breadcrumb class="bg-white">
+            <b-breadcrumb-item to="/">
+                <b-icon
+                    icon="house-fill"
+                    scale="1.25"
+                    shift-v="1.25"
+                    aria-hidden="true"
+                ></b-icon
+                >Home</b-breadcrumb-item
+            >
+            <b-breadcrumb-item active>detail</b-breadcrumb-item>
+        </b-breadcrumb>
         <loading :isLoading="isLoading" v-bind:color="'primary'" />
         <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
             <b-alert

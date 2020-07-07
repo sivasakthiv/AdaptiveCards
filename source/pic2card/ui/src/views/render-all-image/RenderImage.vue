@@ -1,20 +1,25 @@
 <template>
-    <div class=" d-flex w-100 ">
-        <loading :isLoading="isLoading" :color="'primary'" />
-
-        <div class="w-100 justify-content-center">
-            <div class="d-flex w-100 title">
-                <div class="flex-fill">ImageBoundary</div>
-                <div class="flex-fill">AdaptiveCard</div>
-            </div>
-            <RenderImageItem
-                v-for="(item, index) in templates"
-                :key="index"
-                :url="item"
-                :id="index.toString()"
+    <div class="flex-wrap  d-flex">
+        <div class=" d-flex w-100 justify-content-end p-1 sticky-top">
+            <b-button size="sm" variant="warning" @click="goBack()"
+                >Go back</b-button
             >
-            </RenderImageItem>
-            <!-- <div v-if="isError" class="justify-content-center mt-2 p-2">
+        </div>
+        <div class=" d-flex w-100 ">
+            <loading :isLoading="isLoading" :color="'primary'" />
+            <div class="w-100 justify-content-center">
+                <div class="d-flex w-100 title">
+                    <div class="flex-fill">ImageBoundary</div>
+                    <div class="flex-fill">AdaptiveCard</div>
+                </div>
+                <RenderImageItem
+                    v-for="(item, index) in templates"
+                    :key="index"
+                    :url="item"
+                    :id="index.toString()"
+                >
+                </RenderImageItem>
+                <!-- <div v-if="isError" class="justify-content-center mt-2 p-2">
                 <b-alert
                     show
                     variant="warning"
@@ -34,6 +39,7 @@
             >
                 {{ index }}
             </div> -->
+            </div>
         </div>
     </div>
 </template>
@@ -60,6 +66,11 @@ export default {
         templates: state => state.pic2card.base64_images
     }),
     methods: {
+        goBack: function(value) {
+            this.$router.push({
+                name: 'Pic2Card'
+            })
+        },
         openDetailView: function(value) {
             this.$router.push({
                 name: 'cardDetailView',

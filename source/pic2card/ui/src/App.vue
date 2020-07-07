@@ -38,7 +38,8 @@ html {
     height: calc(100vh - 8rem);
     width: 100%;
     display: flex;
-    overflow: auto;
     position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 </style>
