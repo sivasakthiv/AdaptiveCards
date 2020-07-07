@@ -8,7 +8,7 @@
                 <div class="flex-fill">AdaptiveCard</div>
             </div>
             <RenderImageItem
-                v-for="(item, index) in base64_images"
+                v-for="(item, index) in templates"
                 :key="index"
                 :url="item"
                 :id="index.toString()"
@@ -41,6 +41,7 @@
 import Loader from '../../components/loader/Loader.vue'
 import RenderImageItem from '../render-all-image/RenderImageItem'
 import imageapi from '@/services/ImageApi.js'
+import { mapState } from 'vuex'
 export default {
     name: 'RenderImage',
     components: {
@@ -49,12 +50,15 @@ export default {
     },
     data() {
         return {
-            isLoading: true,
+            isLoading: false,
             base64_images: null,
             isError: false,
             error: ''
         }
     },
+    computed: mapState({
+        templates: state => state.pic2card.base64_images
+    }),
     methods: {
         openDetailView: function(value) {
             this.$router.push({
@@ -65,12 +69,13 @@ export default {
             })
         },
         getTemplateImages: function() {
+            console.log('calling get template image api')
             this.isLoading = true
             imageapi
                 .getTemplateImages()
                 .then(response => {
                     let cards = response.data['templates']
-                    this.base64_images = cards
+                    this.$store.dispatch('saveTemplateImages', cards)
                     this.isLoading = false
                 })
                 .catch(err => {
@@ -88,7 +93,9 @@ export default {
         }
     },
     created() {
-        this.getTemplateImages()
+        if (this.templates.length == 0) {
+            this.getTemplateImages()
+        }
     }
 }
 </script>

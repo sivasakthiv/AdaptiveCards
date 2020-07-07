@@ -15,7 +15,7 @@
             </div>
             <div
                 v-else
-                v-for="(item, index) in base64_images"
+                v-for="(item, index) in templates"
                 :key="index"
                 class="col-lg-3 col-md-4 col-6 "
                 @click="openDetailView(item)"
@@ -41,6 +41,7 @@
 import Loader from '../../components/loader/Loader.vue'
 import CardDetailView from './CardDetailView'
 import imageapi from '@/services/ImageApi.js'
+import { mapState } from 'vuex'
 export default {
     name: 'Pic2card',
     components: {
@@ -49,12 +50,15 @@ export default {
     },
     data() {
         return {
-            isLoading: true,
+            isLoading: false,
             base64_images: null,
             isError: false,
             error: ''
         }
     },
+    computed: mapState({
+        templates: state => state.pic2card.base64_images
+    }),
     methods: {
         openDetailView: function(value) {
             this.$router.push({
@@ -65,12 +69,13 @@ export default {
             })
         },
         getTemplateImages: function() {
+            console.log('calling get template image api')
             this.isLoading = true
             imageapi
                 .getTemplateImages()
                 .then(response => {
                     let cards = response.data['templates']
-                    this.base64_images = cards
+                    this.$store.dispatch('saveTemplateImages', cards)
                     this.isLoading = false
                 })
                 .catch(err => {
@@ -88,7 +93,9 @@ export default {
         }
     },
     created() {
-        this.getTemplateImages()
+        if (this.templates.length == 0) {
+            this.getTemplateImages()
+        }
     }
 }
 </script>

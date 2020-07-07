@@ -16,7 +16,7 @@
                 {{ error }} please try again.!
             </b-alert>
         </div> -->
-        <div class="d-flex bg-white h-100 w-100">
+        <div class="d-flex bg-white h-100 w-100" style="min-height:200px">
             <div class=" left-container mr-1 bg-light">
                 <b-img-lazy
                     v-if="imageBoundary"
