@@ -14,15 +14,19 @@
         >
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav w-100  justify-content-end">
                 <li class="nav-item ">
-                    <router-link to="/" class="nav-link" active-class="active"
-                        >Dashboard</router-link
+                    <router-link
+                        to="/renderAll"
+                        class="btn  btn-sm btn-primary"
+                        active-class="btn  btn-sm btn-warning "
                     >
+                        Render All
+                    </router-link>
                 </li>
             </ul>
-        </div> -->
+        </div>
     </nav>
 </template>
 

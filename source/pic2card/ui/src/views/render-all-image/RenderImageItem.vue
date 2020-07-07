@@ -1,7 +1,12 @@
 <template>
-    <div class="d-flex   flex-column position-relative ">
+    <div class=" position-relative  mb-2" style="min-height:200px">
+        <b-modal :id="cardId">
+            <div class="modalBody">
+                {{ cardJson }}
+            </div>
+        </b-modal>
         <loading :isLoading="isLoading" v-bind:color="'primary'" />
-        <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
+        <!-- <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
             <b-alert
                 show
                 variant="warning"
@@ -10,42 +15,31 @@
             >
                 {{ error }} please try again.!
             </b-alert>
-        </div>
-        <div v-else v-show="!isLoading" class="d-flex bg-white h-100">
+        </div> -->
+        <div class="d-flex bg-white h-100 w-100">
             <div class=" left-container mr-1 bg-light">
-                <div v-if="!isLoading" class="title text-center">
-                    Picture Boundary
-                </div>
                 <b-img-lazy
                     v-if="imageBoundary"
                     v-bind="{
                         blank: true,
                         blankColor: '#bbb',
-                        width: 450,
-                        height: 450
+                        width: 350,
+                        height: 350
                     }"
                     :src="imageBoundary | image_data_url"
                     rounded
                 ></b-img-lazy>
             </div>
             <div class="right-container ml-1  bg-light p-2">
-                <div v-if="!isLoading" class="title text-center">
-                    Adaptive Card
-                </div>
-                <div ref="cards" class="d-flex justify-content-center"></div>
-                <div class="d-flex justify-content-center">
+                <div :id="cardId" class="d-flex justify-content-center"></div>
+                <div class="d-flex justify-content-center m-1 -1">
                     <div
                         v-if="cardJson"
                         class="btn btn-sm btn-primary"
-                        v-b-modal.my-modal
+                        v-b-modal="cardId"
                     >
                         Card Json
                     </div>
-                    <b-modal id="my-modal" content-class="">
-                        <div class="modalBody">
-                            {{ cardJson }}
-                        </div>
-                    </b-modal>
                 </div>
             </div>
         </div>
@@ -59,9 +53,10 @@ import AdaptiveCardApi from '../../services/ImageApi'
 import Config from '../../utils/config'
 import MarkdownIt from 'markdown-it'
 export default {
-    name: 'CardDetailView',
+    name: 'RenderImageItem',
     props: {
-        url: String
+        url: String,
+        id: String
     },
     components: {
         loading: Loader
@@ -74,12 +69,8 @@ export default {
             imageBoundary: null,
             cardJson: null,
             isError: false,
-            error: ''
-        }
-    },
-    computed: {
-        image_data_url() {
-            return 'data:image/png;base64,' + this.imageString
+            error: '',
+            cardId: 'card' + this.id
         }
     },
     filters: {
@@ -92,9 +83,8 @@ export default {
             this.isLoading = true
             AdaptiveCardApi.getAdaptiveCard(base64_image)
                 .then(response => {
-                    // console.log(response.data)
                     let card_json = response.data['card_json']
-                    this.cardJson = JSON.stringify(card_json, null, 2)
+                    this.cardJson = JSON.stringify(card_json, null, 4)
                     this.imageBoundary = response.data.image || null
                     // Add markdown rendering.
                     AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(
@@ -112,8 +102,9 @@ export default {
                     )
                     adaptiveCard.parse(card_json)
                     this.cardHtml = adaptiveCard.render()
-                    this.$refs.cards.appendChild(this.cardHtml)
-
+                    document
+                        .getElementById(this.cardId)
+                        .appendChild(this.cardHtml)
                     // Also update the image that has bounding box.
                     this.imageString = response.data['image']
                     this.isLoading = false
@@ -126,14 +117,11 @@ export default {
                 })
         }
     },
-    beforeMount() {
+    mounted() {
         this.pic2Card(this.imageString)
     },
-    mounted() {
-        this.$refs.cards.innerHTML = ''
-        if (this.cardHtml) {
-            this.$refs.cards.appendChild(this.cardHtml)
-        }
+    destroyed() {
+        console.log('renderimageitem-destroyed')
     }
 }
 </script>

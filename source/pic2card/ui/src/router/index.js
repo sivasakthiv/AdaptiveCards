@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import LandingPage from '../views/landing-page/LandingPage.vue'
 import Pic2Card from '../views/pic2card/Pic2Card.vue'
 import CardDetailView from '../views/pic2card/CardDetailView.vue'
+import RenderImage from '../views/render-all-image/RenderImage.vue'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -12,6 +13,12 @@ const routes = [
         path: '/cardview',
         name: 'cardDetailView',
         component: CardDetailView,
+        props: true
+    },
+    {
+        path: '/renderAll',
+        name: 'renderAllImage',
+        component: RenderImage,
         props: true
     },
     {
