@@ -1,63 +1,81 @@
 <template>
-    <div class="d-flex   flex-column position-relative ">
-        <b-breadcrumb class="bg-white">
-            <b-breadcrumb-item to="/">
-                <b-icon
-                    icon="house-fill"
-                    scale="1.25"
-                    shift-v="1.25"
-                    aria-hidden="true"
-                ></b-icon
-                >Home</b-breadcrumb-item
+    <div>
+        <div class=" d-flex justify-content-end p-1 sticky-top">
+            <select
+                v-model="selected"
+                class="form-control w-25 mr-1"
+                @change="onChange"
             >
-            <b-breadcrumb-item active>detail</b-breadcrumb-item>
-        </b-breadcrumb>
-        <loading :isLoading="isLoading" v-bind:color="'primary'" />
-        <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
-            <b-alert
-                show
-                variant="warning"
-                dismissible
-                @dismissed=";(isError = false), pic2Card(url)"
+                <option
+                    v-for="(option, index) in options"
+                    :value="option"
+                    :key="index"
+                    >{{ option }}</option
+                >
+            </select>
+            <b-button size="sm" variant="warning" @click="goBack()"
+                >Go back</b-button
             >
-                {{ error }} please try again.!
-            </b-alert>
         </div>
-        <div v-else v-show="!isLoading" class="d-flex bg-white h-100">
-            <div class=" left-container mr-1 bg-light">
-                <div v-if="!isLoading" class="title text-center">
-                    Picture Boundary
-                </div>
-                <b-img-lazy
-                    v-if="imageBoundary"
-                    v-bind="{
-                        blank: true,
-                        blankColor: '#bbb',
-                        width: 450,
-                        height: 450
-                    }"
-                    :src="imageBoundary | image_data_url"
-                    rounded
-                ></b-img-lazy>
+        <div class="d-flex w-100 ">
+            <loading :isLoading="isLoading" v-bind:color="'primary'" />
+            <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
+                <b-alert
+                    show
+                    variant="warning"
+                    dismissible
+                    @dismissed=";(isError = false), pic2Card(url)"
+                >
+                    {{ error }} please try again.!
+                </b-alert>
             </div>
-            <div class="right-container ml-1  bg-light p-2">
-                <div v-if="!isLoading" class="title text-center">
-                    Adaptive Card
-                </div>
-                <div ref="cards" class="d-flex justify-content-center"></div>
-                <div class="d-flex justify-content-center">
-                    <div
-                        v-if="cardJson"
-                        class="btn btn-sm btn-primary"
-                        v-b-modal.my-modal
-                    >
-                        Card Json
+            <div
+                v-else
+                v-show="!isLoading"
+                class="d-flex bg-white h-100 w-100 p-2"
+            >
+                <div class=" left-container mr-1 bg-light">
+                    <div v-if="!isLoading" class="title text-center">
+                        Picture Boundary
                     </div>
-                    <b-modal id="my-modal" content-class="">
-                        <div class="modalBody">
-                            {{ cardJson }}
+                    <b-img-lazy
+                        v-if="imageBoundary"
+                        v-bind="{
+                            blank: true,
+                            blankColor: '#bbb',
+                            width: 340,
+                            height: 340
+                        }"
+                        :src="imageBoundary | image_data_url"
+                        rounded
+                    ></b-img-lazy>
+                </div>
+                <div class="right-container ml-1  bg-light p-2">
+                    <div v-if="!isLoading" class="title text-center">
+                        Adaptive Card
+                    </div>
+                    <div
+                        ref="cards"
+                        class="d-flex justify-content-center"
+                    ></div>
+                    <div class="d-flex justify-content-center mt-1">
+                        <div
+                            v-if="cardJson && !isLoading"
+                            class="btn btn-sm btn-primary"
+                            v-b-modal.my-modal
+                        >
+                            Card Json
                         </div>
-                    </b-modal>
+                        <b-modal
+                            id="my-modal"
+                            content-class=""
+                            title="Adaptive Card Json"
+                        >
+                            <div class="modalBody">
+                                {{ cardJson }}
+                            </div>
+                        </b-modal>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,6 +88,7 @@ import * as AdaptiveCards from 'adaptivecards'
 import AdaptiveCardApi from '../../services/ImageApi'
 import Config from '../../utils/config'
 import MarkdownIt from 'markdown-it'
+import config from '../../utils/config'
 export default {
     name: 'CardDetailView',
     props: {
@@ -86,7 +105,9 @@ export default {
             imageBoundary: null,
             cardJson: null,
             isError: false,
-            error: ''
+            error: '',
+            selected: 'adaptiveHostConfig',
+            options: Object.keys(config)
         }
     },
     computed: {
@@ -100,6 +121,16 @@ export default {
         }
     },
     methods: {
+        onChange(event) {
+            this.selected = event.target.value
+            this.$refs.cards.innerHTML = ''
+            this.pic2Card(this.imageString)
+        },
+        goBack: function(value) {
+            this.$router.push({
+                name: 'Pic2Card'
+            })
+        },
         pic2Card(base64_image) {
             this.isLoading = true
             AdaptiveCardApi.getAdaptiveCard(base64_image)
@@ -119,16 +150,16 @@ export default {
                     }
 
                     let adaptiveCard = new AdaptiveCards.AdaptiveCard()
-                    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(
-                        Config.adaptiveHostConfig
-                    )
+                    const host = Config[this.selected]
+                    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(host)
                     adaptiveCard.parse(card_json)
                     this.cardHtml = adaptiveCard.render()
-                    this.$refs.cards.appendChild(this.cardHtml)
-
-                    // Also update the image that has bounding box.
-                    this.imageString = response.data['image']
-                    this.isLoading = false
+                    setTimeout(() => {
+                        this.$refs.cards.appendChild(this.cardHtml)
+                        // Also update the image that has bounding box.
+                        this.imageString = response.data['image']
+                        this.isLoading = false
+                    }, 200)
                 })
                 .catch(err => {
                     console.log(err)

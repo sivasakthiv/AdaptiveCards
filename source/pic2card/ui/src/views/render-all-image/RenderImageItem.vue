@@ -1,6 +1,6 @@
 <template>
     <div class=" position-relative  mb-2" style="min-height:200px">
-        <b-modal :id="cardId">
+        <b-modal :id="modalId" title="Adaptive Card Json">
             <div class="modalBody">
                 {{ cardJson }}
             </div>
@@ -31,12 +31,16 @@
                 ></b-img-lazy>
             </div>
             <div class="right-container ml-1  bg-light p-2">
-                <div :id="cardId" class="d-flex justify-content-center"></div>
+                <div
+                    :id="cardId"
+                    :ref="cardId"
+                    class="d-flex justify-content-center"
+                ></div>
                 <div class="d-flex justify-content-center m-1 -1">
                     <div
-                        v-if="cardJson"
+                        v-if="cardJson && !isLoading"
                         class="btn btn-sm btn-primary"
-                        v-b-modal="cardId"
+                        v-b-modal="modalId"
                     >
                         Card Json
                     </div>
@@ -56,7 +60,8 @@ export default {
     name: 'RenderImageItem',
     props: {
         url: String,
-        id: String
+        id: String,
+        hostConfig: String
     },
     components: {
         loading: Loader
@@ -70,7 +75,13 @@ export default {
             cardJson: null,
             isError: false,
             error: '',
-            cardId: 'card' + this.id
+            cardId: 'card' + this.id,
+            modalId: 'modal' + this.id
+        }
+    },
+    watch: {
+        hostConfig: function(newVal, oldVal) {
+            this.renderCard(this.imageString, this.cardJson, this.hostConfig)
         }
     },
     filters: {
@@ -79,6 +90,44 @@ export default {
         }
     },
     methods: {
+        renderCard(base64_image, card_json, hostConfig) {
+            this.$refs[this.cardId.toString()].innerHTML = ''
+            this.isLoading = true
+            AdaptiveCardApi.getAdaptiveCard(base64_image)
+                .then(response => {
+                    let card_json = response.data['card_json']
+                    this.cardJson = JSON.stringify(card_json, null, 4)
+                    this.imageBoundary = response.data.image || null
+                    // Add markdown rendering.
+                    AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(
+                        text,
+                        result
+                    ) {
+                        let md = new MarkdownIt()
+                        result.outputHtml = md.render(text)
+                        result.didProcess = true
+                    }
+                    let adaptiveCard = new AdaptiveCards.AdaptiveCard()
+                    const host = Config[hostConfig]
+                    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(host)
+                    adaptiveCard.parse(card_json)
+                    this.cardHtml = adaptiveCard.render()
+                    setTimeout(() => {
+                        this.$refs[this.cardId.toString()].appendChild(
+                            this.cardHtml
+                        )
+                        // Also update the image that has bounding box.
+                        this.imageString = response.data['image']
+                        this.isLoading = false
+                    }, 200)
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.isLoading = false
+                    this.error = 'Something Went Wrong'
+                    this.isError = true
+                })
+        },
         pic2Card(base64_image) {
             this.isLoading = true
             AdaptiveCardApi.getAdaptiveCard(base64_image)
@@ -95,16 +144,14 @@ export default {
                         result.outputHtml = md.render(text)
                         result.didProcess = true
                     }
-
                     let adaptiveCard = new AdaptiveCards.AdaptiveCard()
-                    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(
-                        Config.adaptiveHostConfig
-                    )
+                    const host = Config.adaptiveHostConfig
+                    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(host)
                     adaptiveCard.parse(card_json)
                     this.cardHtml = adaptiveCard.render()
-                    document
-                        .getElementById(this.cardId)
-                        .appendChild(this.cardHtml)
+                    this.$refs[this.cardId.toString()].appendChild(
+                        this.cardHtml
+                    )
                     // Also update the image that has bounding box.
                     this.imageString = response.data['image']
                     this.isLoading = false
