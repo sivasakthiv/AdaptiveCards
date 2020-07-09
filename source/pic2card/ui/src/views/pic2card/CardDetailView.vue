@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class=" d-flex justify-content-end p-1 sticky-top">
+    <div class="bg-white w-100">
+        <div class=" d-flex justify-content-end p-1 sticky-top ">
             <select
                 v-model="selected"
                 class="form-control w-25 mr-1"
@@ -17,7 +17,7 @@
                 >Go back</b-button
             >
         </div>
-        <div class="d-flex w-100 ">
+        <div class="d-flex w-100 bg-white justify-content-center">
             <loading :isLoading="isLoading" v-bind:color="'primary'" />
             <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
                 <b-alert
@@ -29,12 +29,8 @@
                     {{ error }} please try again.!
                 </b-alert>
             </div>
-            <div
-                v-else
-                v-show="!isLoading"
-                class="d-flex bg-white h-100 w-100 p-2"
-            >
-                <div class=" left-container mr-1 bg-light">
+            <div v-else v-show="!isLoading" class="main-container">
+                <div class=" left-container mr-1 bg-light shadow-sm mr-5">
                     <div v-if="!isLoading" class="title text-center">
                         Picture Boundary
                     </div>
@@ -43,21 +39,19 @@
                         v-bind="{
                             blank: true,
                             blankColor: '#bbb',
-                            width: 340,
-                            height: 340
+                            width: 380,
+                            height: 380
                         }"
                         :src="imageBoundary | image_data_url"
+                        class="p-2"
                         rounded
                     ></b-img-lazy>
                 </div>
-                <div class="right-container ml-1  bg-light p-2">
+                <div class="right-container ml-1  bg-light shadow-sm p-2 ml-5">
                     <div v-if="!isLoading" class="title text-center">
                         Adaptive Card
                     </div>
-                    <div
-                        ref="cards"
-                        class="d-flex justify-content-center"
-                    ></div>
+                    <div ref="cards" class=" cards d-flex w-100 h-100"></div>
                     <div class="d-flex justify-content-center mt-1">
                         <div
                             v-if="cardJson && !isLoading"
@@ -182,17 +176,55 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main-container {
+    display: flex;
+    width: 85%;
+    height: 100%;
+    padding: 1rem;
+    margin: 0.5rem;
+    position: relative;
+}
 .left-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 400px;
+    max-height: 400px;
+    min-height: 400px;
+    width: 100%;
 }
 .right-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
+    align-items: center;
+    height: 400px;
+    width: 100%;
+    max-height: 400px;
+    min-height: 400px;
+}
+.cards {
+    overflow: overlay;
+    position: relative;
+    justify-content: center;
+}
+.cards::-webkit-scrollbar {
+    background: transparent;
+    height: 15px;
+    width: 15px;
+}
+.cards::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: solid whiteSmoke 6px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+.cards::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+.cards::-webkit-scrollbar-track {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
 }
 .title {
     font-size: 1.2rem;

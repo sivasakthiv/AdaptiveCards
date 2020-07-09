@@ -1,5 +1,8 @@
 <template>
-    <div class=" position-relative  mb-2" style="min-height:200px">
+    <div
+        class=" position-relative d-flex justify-content-center mb-2"
+        style="min-height:200px"
+    >
         <b-modal :id="modalId" title="Adaptive Card Json">
             <div class="modalBody">
                 {{ cardJson }}
@@ -16,8 +19,8 @@
                 {{ error }} please try again.!
             </b-alert>
         </div> -->
-        <div class="d-flex bg-white h-100 w-100" style="min-height:200px">
-            <div class=" left-container mr-1 bg-light">
+        <div class="d-flex bg-white  main-container " style="min-height:200px">
+            <div class=" left-container bg-light shadow-sm">
                 <b-img-lazy
                     v-if="imageBoundary"
                     v-bind="{
@@ -30,11 +33,11 @@
                     rounded
                 ></b-img-lazy>
             </div>
-            <div class="right-container ml-1  bg-light p-2">
+            <div class="right-container   bg-light p-2 shadow-sm">
                 <div
                     :id="cardId"
                     :ref="cardId"
-                    class="d-flex justify-content-center"
+                    class="cards d-flex w-100 h-100"
                 ></div>
                 <div class="d-flex justify-content-center m-1 -1">
                     <div
@@ -174,17 +177,56 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main-container {
+    display: flex;
+    width: 85%;
+    height: 100%;
+    padding: 1rem;
+    margin: 0.5rem;
+    position: relative;
+}
 .left-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 400px;
+    width: 80%;
+    max-height: 400px;
+    min-height: 400px;
+    margin-right: 1rem;
 }
 .right-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
+    height: 400px;
+    width: 80%;
+    max-height: 400px;
+    min-height: 400px;
+    margin-left: 1rem;
+}
+.cards {
+    overflow: overlay;
+    position: relative;
+    justify-content: center;
+}
+.cards::-webkit-scrollbar {
+    background: transparent;
+    height: 15px;
+    width: 15px;
+}
+.cards::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: solid whiteSmoke 6px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+.cards::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+.cards::-webkit-scrollbar-track {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
 }
 .title {
     font-size: 1.2rem;

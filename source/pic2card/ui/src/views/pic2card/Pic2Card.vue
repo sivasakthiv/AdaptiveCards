@@ -7,8 +7,10 @@
         </div>
         <div class=" d-flex w-100 ">
             <loading :isLoading="isLoading" :color="'primary'" />
-            <div class="flex-wrap  d-flex w-100 justify-content-center">
-                <div v-if="isError" class="justify-content-center mt-2 p-2">
+            <div
+                class="flex-wrap  d-flex w-100 justify-content-center  bg-white "
+            >
+                <div v-if="isError" class="justify-content-center mt-2 p-1">
                     <b-alert
                         show
                         variant="warning"
@@ -22,19 +24,18 @@
                     v-else
                     v-for="(item, index) in templates"
                     :key="index"
-                    class="col-lg-3 col-md-4 col-6 "
+                    class="col-lg-3 col-md-4 col-12   border border-light image-item "
                     @click="openDetailView(item)"
                 >
-                    <div class="d-block mb-4 h-100">
+                    <div class="d-block h-100 ">
                         <b-img-lazy
                             v-bind="{
                                 blank: true,
                                 blankColor: '#bbb',
-                                width: 250,
-                                height: 250
+                                width: 300,
+                                height: 300
                             }"
                             :src="item | image_data_url"
-                            rounded
                             class="p2c-thumbnail"
                         ></b-img-lazy>
                     </div>
@@ -57,7 +58,6 @@ export default {
     data() {
         return {
             isLoading: false,
-            base64_images: null,
             isError: false,
             error: ''
         }
@@ -113,5 +113,9 @@ export default {
 <style lang="scss" scoped>
 .p2c-thumbnail {
     cursor: pointer;
+}
+.image-item {
+    padding: 5px;
+    // margin: 5px;
 }
 </style>

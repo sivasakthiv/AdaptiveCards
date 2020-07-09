@@ -32,26 +32,6 @@
                     :id="index.toString()"
                 >
                 </RenderImageItem>
-                <!-- <div v-if="isError" class="justify-content-center mt-2 p-2">
-                <b-alert
-                    show
-                    variant="warning"
-                    dismissible
-                    @dismissed=";(isError = false), getTemplateImages()"
-                >
-                    {{ error }} please try again.!
-                </b-alert>
-            </div>
-
-            <div
-                v-else
-                v-for="(item, index) in base64_images"
-                :key="index"
-                class="col-lg-3 col-md-4 col-6 "
-                @click="openDetailView(item)"
-            >
-                {{ index }}
-            </div> -->
             </div>
         </div>
     </div>
@@ -72,7 +52,6 @@ export default {
     data() {
         return {
             isLoading: false,
-            base64_images: null,
             isError: false,
             error: '',
             selected: 'adaptiveHostConfig',

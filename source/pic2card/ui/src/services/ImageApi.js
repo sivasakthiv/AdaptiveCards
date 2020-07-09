@@ -17,7 +17,7 @@ export default {
         return apiClient.baseURL
     },
     getTemplateImages() {
-        // return axios.get('json/sample_get_card_templates.json')
+        return axios.get('json/sample_get_card_templates.json')
         return apiClient.get('/get_card_templates')
     },
     getAdaptiveCard(base64_image) {
@@ -31,7 +31,7 @@ export default {
         }
         // Creating fresh client instance to handle the request, as
         // latency of this endpoint is higher.sample_predict_json_debug
-        // return axios.get('json/sample_predict_json_debug.json')
+        return axios.get('json/sample_predict_json_debug.json')
 
         return axios({
             method: 'post',
