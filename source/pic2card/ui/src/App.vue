@@ -21,6 +21,7 @@ export default {
 <style lang="scss">
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/bootstrap-vue/src/index.scss';
+@import './scss/jsoneditor.scss';
 #app-container {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

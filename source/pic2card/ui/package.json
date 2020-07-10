@@ -15,6 +15,7 @@
 		"core-js": "^3.6.4",
 		"konva": "^6.0.0",
 		"markdown-it": "^10.0.0",
+		"v-jsoneditor": "^1.4.1",
 		"vue": "^2.6.11",
 		"vue-konva": "^2.1.2",
 		"vue-router": "^3.1.6",

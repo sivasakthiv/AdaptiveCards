@@ -3,9 +3,19 @@
         class=" position-relative d-flex justify-content-center mb-2"
         style="min-height:200px"
     >
-        <b-modal :id="modalId" title="Adaptive Card Json">
+        <b-modal
+            :id="modalId"
+            title="Adaptive Card Json"
+            button-size="sm"
+            size="lg"
+        >
             <div class="modalBody">
-                {{ cardJson }}
+                <json-viewer
+                    v-model="cardJson"
+                    :options="jsonViewerOption"
+                    :plus="false"
+                    :height="'400px'"
+                />
             </div>
         </b-modal>
         <loading :isLoading="isLoading" v-bind:color="'primary'" />
@@ -45,7 +55,7 @@
                         class="btn btn-sm btn-primary"
                         v-b-modal="modalId"
                     >
-                        Card Json
+                        View Json
                     </div>
                 </div>
             </div>
@@ -79,7 +89,22 @@ export default {
             isError: false,
             error: '',
             cardId: 'card' + this.id,
-            modalId: 'modal' + this.id
+            modalId: 'modal' + this.id,
+            jsonViewerOption: {
+                mode: 'code',
+                mainMenuBar: false,
+                navigationBar: false,
+                statusBar: false,
+                onEditable: function(node) {
+                    if (!node.path) {
+                        // returning false makes the text area read-only
+                        return false
+                    }
+                },
+                onError: function(err) {
+                    console.log(err)
+                }
+            }
         }
     },
     watch: {
@@ -107,7 +132,7 @@ export default {
             let adaptiveCard = new AdaptiveCards.AdaptiveCard()
             const host = Config[hostConfig]
             adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(host)
-            adaptiveCard.parse(JSON.parse(this.cardJson))
+            adaptiveCard.parse(this.cardJson)
             this.cardHtml = adaptiveCard.render()
             setTimeout(() => {
                 this.$refs[this.cardId.toString()].appendChild(this.cardHtml)
@@ -119,7 +144,7 @@ export default {
             AdaptiveCardApi.getAdaptiveCard(base64_image)
                 .then(response => {
                     let card_json = response.data['card_json']
-                    this.cardJson = JSON.stringify(card_json, null, 4)
+                    this.cardJson = card_json
                     this.imageBoundary = response.data.image || null
                     // Add markdown rendering.
                     AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(
