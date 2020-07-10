@@ -1,9 +1,23 @@
 <template>
     <div>
         <div class=" d-flex justify-content-end p-1 sticky-top">
-            <b-button size="sm" variant="primary" @click="openRenderAll()"
-                >Render All</b-button
-            >
+            <div class="d-flex w-50 justify-content-end">
+                <b-form-file
+                    v-model="file"
+                    placeholder=""
+                    class="w-50 mr-1"
+                    accept="image/*"
+                    size="sm"
+                    ref="fileSelect"
+                >
+                    <!-- <template slot="file-name" slot-scope="{ names }">
+                        <b-badge variant="light">{{ names[0] }}</b-badge>
+                    </template> -->
+                </b-form-file>
+                <b-button size="sm" variant="primary" @click="openRenderAll()"
+                    >Render All</b-button
+                >
+            </div>
         </div>
         <div class=" d-flex w-100 ">
             <loading :isLoading="isLoading" :color="'primary'" />
@@ -59,7 +73,27 @@ export default {
         return {
             isLoading: false,
             isError: false,
-            error: ''
+            error: '',
+            file: null
+        }
+    },
+
+    watch: {
+        file: function(newVal, oldVal) {
+            var filethis = this
+            var reader = new FileReader()
+            reader.readAsDataURL(newVal)
+            reader.onload = function() {
+                filethis.$router.push({
+                    name: 'cardDetailView',
+                    params: {
+                        url: reader.result.split(',')[1]
+                    }
+                })
+            }
+            reader.onerror = function(error) {
+                console.log('Error: ', error)
+            }
         }
     },
     computed: mapState({
@@ -107,6 +141,9 @@ export default {
         if (this.templates.length == 0) {
             this.getTemplateImages()
         }
+    },
+    beforeDestroy() {
+        this.$refs.fileSelect.reset()
     }
 }
 </script>

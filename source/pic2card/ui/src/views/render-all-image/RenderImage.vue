@@ -1,18 +1,14 @@
 <template>
     <div>
         <div class=" d-flex justify-content-end p-1 sticky-top">
-            <select
+            <b-form-select
                 v-model="selected"
                 class="form-control w-25 mr-1"
                 @change="onChange"
+                size="sm"
+                :options="options"
             >
-                <option
-                    v-for="(option, index) in options"
-                    :value="option"
-                    :key="index"
-                    >{{ option }}</option
-                >
-            </select>
+            </b-form-select>
             <b-button size="sm" variant="warning" @click="goBack()"
                 >Go back</b-button
             >
@@ -65,7 +61,6 @@ export default {
     },
     methods: {
         onChange(event) {
-            this.selected = event.target.value
             if (this.templates.length == 0) {
                 this.getTemplateImages()
             }

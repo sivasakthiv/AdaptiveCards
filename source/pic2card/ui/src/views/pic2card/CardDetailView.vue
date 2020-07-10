@@ -1,18 +1,14 @@
 <template>
     <div class="bg-white w-100">
         <div class=" d-flex justify-content-end p-1 sticky-top ">
-            <select
+            <b-form-select
                 v-model="selected"
                 class="form-control w-25 mr-1"
                 @change="onChange"
+                size="sm"
+                :options="options"
             >
-                <option
-                    v-for="(option, index) in options"
-                    :value="option"
-                    :key="index"
-                    >{{ option }}</option
-                >
-            </select>
+            </b-form-select>
             <b-button size="sm" variant="warning" @click="goBack()"
                 >Go back</b-button
             >
@@ -116,9 +112,27 @@ export default {
     },
     methods: {
         onChange(event) {
-            this.selected = event.target.value
             this.$refs.cards.innerHTML = ''
-            this.pic2Card(this.imageString)
+            // this.pic2Card(this.imageString)
+            AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(
+                text,
+                result
+            ) {
+                let md = new MarkdownIt()
+                result.outputHtml = md.render(text)
+                result.didProcess = true
+            }
+
+            let adaptiveCard = new AdaptiveCards.AdaptiveCard()
+            const host = Config[this.selected]
+            adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(host)
+            adaptiveCard.parse(JSON.parse(this.cardJson))
+            this.cardHtml = adaptiveCard.render()
+            setTimeout(() => {
+                this.$refs.cards.appendChild(this.cardHtml)
+                // Also update the image that has bounding box.
+                this.isLoading = false
+            }, 200)
         },
         goBack: function(value) {
             this.$router.push({
