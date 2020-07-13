@@ -22,9 +22,14 @@ const routes = [
         props: true
     },
     {
-        path: '/',
+        path: '/Pic2Card',
         name: 'Pic2Card',
         component: Pic2Card
+    },
+    {
+        path: '/',
+        name: 'LandingPage',
+        component: LandingPage
     }
 ]
 

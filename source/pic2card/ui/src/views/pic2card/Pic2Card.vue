@@ -2,7 +2,8 @@
     <div>
         <div class=" d-flex justify-content-end p-1 sticky-top">
             <div class="d-flex w-50 justify-content-end">
-                <b-form-file
+                <!-- Upload image and render card feature added to landing page -->
+                <!-- <b-form-file
                     v-model="file"
                     placeholder=""
                     class="w-50 mr-1"
@@ -10,10 +11,7 @@
                     size="sm"
                     ref="fileSelect"
                 >
-                    <!-- <template slot="file-name" slot-scope="{ names }">
-                        <b-badge variant="light">{{ names[0] }}</b-badge>
-                    </template> -->
-                </b-form-file>
+                </b-form-file> -->
                 <b-button size="sm" variant="primary" @click="openRenderAll()"
                     >Render All</b-button
                 >
@@ -87,7 +85,8 @@ export default {
                 filethis.$router.push({
                     name: 'cardDetailView',
                     params: {
-                        url: reader.result.split(',')[1]
+                        url: reader.result.split(',')[1],
+                        isFromPic2card: true
                     }
                 })
             }
@@ -104,7 +103,8 @@ export default {
             this.$router.push({
                 name: 'cardDetailView',
                 params: {
-                    url: value
+                    url: value,
+                    isFromPic2card: true
                 }
             })
         },
@@ -143,7 +143,7 @@ export default {
         }
     },
     beforeDestroy() {
-        this.$refs.fileSelect.reset()
+        // this.$refs.fileSelect.reset()
     }
 }
 </script>

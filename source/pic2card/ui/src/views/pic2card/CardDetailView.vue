@@ -89,7 +89,8 @@ import config from '../../utils/config'
 export default {
     name: 'CardDetailView',
     props: {
-        url: String
+        url: String,
+        isFromPic2card: Boolean
     },
     components: {
         loading: Loader
@@ -157,7 +158,7 @@ export default {
         },
         goBack: function(value) {
             this.$router.push({
-                name: 'Pic2Card'
+                name: this.isFromPic2card ? 'Pic2Card' : 'LandingPage'
             })
         },
         pic2Card(base64_image) {

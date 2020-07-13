@@ -5,7 +5,7 @@
 	"scripts": {
 		"serve": "VUE_APP_ENV=development VUE_APP_BASE_URL=http://172.17.0.5:5050 vue-cli-service serve",
 		"serve-production": "VUE_APP_ENV=production VUE_APP_BASE_URL=http://172.17.0.5:5050 vue-cli-service serve",
-		"build-production": "VUE_APP_ENV=production VUE_APP_BASE_URL=http://172.17.0.5:5050 vue-cli-service build",
+		"build": "VUE_APP_ENV=production VUE_APP_BASE_URL=http://172.17.0.5:5050 vue-cli-service build",
 		"lint": "vue-cli-service lint"
 	},
 	"dependencies": {
