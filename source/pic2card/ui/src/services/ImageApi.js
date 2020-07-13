@@ -1,7 +1,5 @@
 import axios from 'axios'
-
-const baseURL = 'http://172.17.0.5:5050'
-
+const baseURL = process.env.VUE_APP_BASE_URL
 const apiClient = axios.create({
     baseURL: baseURL,
     withCredentials: false,
@@ -9,7 +7,7 @@ const apiClient = axios.create({
         Accept: 'application/json',
         'Content-Type': 'application/json'
     },
-    timeout: 20 * 60 * 1000
+    timeout: 2000000
 })
 
 export default {
@@ -24,20 +22,14 @@ export default {
         let data = {
             image: base64_image
         }
-        let config = {
-            header: {
-                'Content-Type': 'application/json'
-            }
-        }
         // Creating fresh client instance to handle the request, as
         // latency of this endpoint is higher.sample_predict_json_debug
         // return axios.get('json/sample_predict_json_debug.json')
-
         return axios({
             method: 'post',
             url: baseURL + '/predict_json_debug',
-            timeout: 20 * 60 * 1000,
-            data: { image: base64_image },
+            timeout: 2000000,
+            data: data,
             headers: {
                 'Content-Type': 'application/json'
             }
