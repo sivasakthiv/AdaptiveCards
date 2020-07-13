@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white w-100">
-        <div class=" d-flex justify-content-end p-1 sticky-top ">
+    <div class="bg-white w-100 position-relative p-2 ">
+        <div class=" d-flex justify-content-end p-1  sticky-top">
             <b-form-select
                 v-model="selected"
                 class="form-control w-25 mr-1"
@@ -13,7 +13,10 @@
                 >Go back</b-button
             >
         </div>
-        <div class="d-flex w-100 bg-white justify-content-center">
+        <div
+            class="position-relative d-flex justify-content-center"
+            style="width:100%;height:90%"
+        >
             <loading :isLoading="isLoading" v-bind:color="'primary'" />
             <div v-if="isError" class="d-flex justify-content-center mt-2 p-2">
                 <b-alert
@@ -35,8 +38,8 @@
                         v-bind="{
                             blank: true,
                             blankColor: '#bbb',
-                            width: 380,
-                            height: 380
+                            width: 350,
+                            height: 350
                         }"
                         :src="imageBoundary | image_data_url"
                         class="p-2"
@@ -47,7 +50,7 @@
                     <div v-if="!isLoading" class="title text-center">
                         Adaptive Card
                     </div>
-                    <div ref="cards" class=" cards d-flex w-100 h-100"></div>
+                    <div ref="cards" class=" cards  "></div>
                     <div class="d-flex justify-content-center mt-1">
                         <div
                             v-if="cardJson && !isLoading"
@@ -118,7 +121,7 @@ export default {
                     }
                 },
                 onError: function(err) {
-                    console.log(err)
+                    // console.log(err)
                 }
             }
         }
@@ -193,7 +196,7 @@ export default {
                     }, 200)
                 })
                 .catch(err => {
-                    console.log(err)
+                    // console.log(err)
                     this.isLoading = false
                     this.error = 'Something Went Wrong'
                     this.isError = true
@@ -202,6 +205,7 @@ export default {
     },
     beforeMount() {
         this.pic2Card(this.imageString)
+        // this.isLoading = true
     },
     mounted() {
         this.$refs.cards.innerHTML = ''
@@ -229,20 +233,24 @@ export default {
     height: 400px;
     max-height: 400px;
     min-height: 400px;
-    width: 100%;
+    width: 50%;
 }
 .right-container {
     display: flex;
+    position: relative;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
     height: 400px;
-    width: 100%;
+    width: 50%;
     max-height: 400px;
     min-height: 400px;
 }
 .cards {
     overflow: overlay;
     position: relative;
+    width: 100%;
+    height: 100%;
     justify-content: center;
 }
 .cards::-webkit-scrollbar {

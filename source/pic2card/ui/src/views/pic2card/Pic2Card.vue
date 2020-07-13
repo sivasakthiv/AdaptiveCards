@@ -12,7 +12,11 @@
                     ref="fileSelect"
                 >
                 </b-form-file> -->
-                <b-button size="sm" variant="primary" @click="openRenderAll()"
+                <b-button
+                    :disabled="isLoading"
+                    size="sm"
+                    variant="primary"
+                    @click="openRenderAll()"
                     >Render All</b-button
                 >
             </div>
@@ -91,7 +95,7 @@ export default {
                 })
             }
             reader.onerror = function(error) {
-                console.log('Error: ', error)
+                // console.log('Error: ', error)
             }
         }
     },
@@ -114,7 +118,7 @@ export default {
             })
         },
         getTemplateImages: function() {
-            console.log('calling get template image api')
+            // console.log('calling get template image api')
             this.isLoading = true
             imageapi
                 .getTemplateImages()
@@ -124,7 +128,7 @@ export default {
                     this.isLoading = false
                 })
                 .catch(err => {
-                    console.log(err)
+                    // console.log(err)
                     this.isLoading = false
                     this.error = 'Something Went Wrong'
                     this.isError = true

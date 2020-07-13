@@ -44,11 +44,7 @@
                 ></b-img-lazy>
             </div>
             <div class="right-container   bg-light p-2 shadow-sm">
-                <div
-                    :id="cardId"
-                    :ref="cardId"
-                    class="cards d-flex w-100 h-100"
-                ></div>
+                <div :id="cardId" :ref="cardId" class="cards"></div>
                 <div class="d-flex justify-content-center m-1 -1">
                     <div
                         v-if="cardJson && !isLoading"
@@ -102,7 +98,7 @@ export default {
                     }
                 },
                 onError: function(err) {
-                    console.log(err)
+                    // console.log(err)
                 }
             }
         }
@@ -168,7 +164,7 @@ export default {
                     this.isLoading = false
                 })
                 .catch(err => {
-                    console.log(err)
+                    // console.log(err)
                     this.isLoading = false
                     this.error = 'Something Went Wrong'
                     this.isError = true
@@ -179,7 +175,7 @@ export default {
         this.pic2Card(this.imageString)
     },
     destroyed() {
-        console.log('renderimageitem-destroyed')
+        // console.log('renderimageitem-destroyed')
     }
 }
 </script>
@@ -199,7 +195,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 400px;
-    width: 80%;
+    width: 50%;
     max-height: 400px;
     min-height: 400px;
     margin-right: 1rem;
@@ -208,14 +204,19 @@ export default {
     display: flex;
     flex-direction: column;
     height: 400px;
-    width: 80%;
+    width: 50%;
     max-height: 400px;
     min-height: 400px;
     margin-left: 1rem;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
 }
 .cards {
     overflow: overlay;
     position: relative;
+    width: 100%;
+    height: 100%;
     justify-content: center;
 }
 .cards::-webkit-scrollbar {

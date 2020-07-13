@@ -22,7 +22,7 @@ const routes = [
         props: true
     },
     {
-        path: '/Pic2Card',
+        path: '/pic2card',
         name: 'Pic2Card',
         component: Pic2Card
     },
